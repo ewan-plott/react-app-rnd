@@ -29,16 +29,17 @@ export default function CardDisplay({ card }) {
     if (!data) return <p>Loading card...</p>;
 
     let name = data.name;
-    let cardPrice = data.card_prices[0].amazon_price;
+    let cardPrice = Number(data.card_prices[0].amazon_price);
+    let cardType = data.type;
 
     return (
-        <div className="card p-4 max-w-sm text-left" 
+        <div className="card p-4 text-left" 
             data-archetype={data.archetype}
-            data-price={Number(cardPrice)}
-            data-type={data.type}>
-            <h2 className="font-bold mb-2">{name}</h2>
+            data-price={cardPrice}
+            data-type={cardType}>
+            <h2 className="font-bold mb-2 hidden">{name}</h2>
 
-            <Image src={data.card_images[0].image_url} alt={data.name} className="w-[150px] rounded mb-2" />
+            <Image src={data.card_images[0].image_url} alt={data.name} className="w-full max-w-[450px] rounded mb-2" />
 
             <h3 className="card-type" data-type={data.type}>{data.type}</h3>
             <p className="card-price">
@@ -46,7 +47,7 @@ export default function CardDisplay({ card }) {
             </p>
 
 
-            <pre className="p-2 rounded text-xs overflow-auto opacity-25">
+            <pre className="p-2 rounded text-xs overflow-auto opacity-25 mb-[50vh]">
                 {JSON.stringify(data, null, 2)}
             </pre>
         </div>

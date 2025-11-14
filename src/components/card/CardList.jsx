@@ -1,17 +1,27 @@
 import { useEffect, useState } from "react";
+import { CardNumSelectField, CardTypeSelectField } from "../../formFields";
 
 export default function CardList({ onCardClick }) {
     const [cards, setCards] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [num, setNum] = useState(20); // default number of cards
+    const [num, setNum] = useState(20);
+    const [type, setType] = useState("");
 
     useEffect(() => {
         async function fetchCards() {
             setLoading(true);
             try {
-                const res = await fetch(
-                    `https://db.ygoprodeck.com/api/v7/cardinfo.php?num=${num}&offset=0`
-                );
+                let url = `https://db.ygoprodeck.com/api/v7/cardinfo.php?`;
+                
+                if (type) {
+                    url += `type=${encodeURIComponent(type)}&`;
+                }
+                
+                url += `num=${num}&offset=0`;
+                
+                console.log("Fetching from:", url); 
+                
+                const res = await fetch(url);
                 const data = await res.json();
                 setCards(data.data);
             } catch (error) {
@@ -22,25 +32,15 @@ export default function CardList({ onCardClick }) {
         }
 
         fetchCards();
-    }, [num]);
+    }, [num, type]);
     
     return (
         <div className="">
             {/* Slider */}
-            <div className="mb-4">
-                <label className="block mb-1 font-semibold">
-                    Number of cards: {num}
-                </label>
-                <input
-                    type="range"
-                    min="5"
-                    max="100"
-                    step="5"
-                    value={num}
-                    onChange={(e) => setNum(Number(e.target.value))}
-                    className="w-full cursor-pointer"
-                />
-            </div>
+            <CardNumSelectField num={num} setNum={setNum} />
+            
+            {/* Type Selector */}
+            <CardTypeSelectField setType={setType} />
 
             <div className="w-full max-h-[400px] overflow-y-scroll p-2 border rounded space-y-4">
             {/* Card list */}
